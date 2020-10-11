@@ -1,2 +1,2 @@
 # dropy-lambda-layer
-presentation file to image converter
+Convert presentation file to image format
