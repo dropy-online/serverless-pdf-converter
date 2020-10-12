@@ -10,3 +10,4 @@ jspm_packages
 
 # Editor
 .vscode
+package-lock.json

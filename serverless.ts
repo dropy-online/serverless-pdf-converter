@@ -11,27 +11,28 @@ const serverlessConfiguration: Serverless = {
       includeModules: true,
     },
   },
-  plugins: ['serverless-webpack','serverless-offline'],
+  plugins: ['serverless-webpack', 'serverless-offline'],
   provider: {
     name: 'aws',
     runtime: 'nodejs12.x',
     stage: 'dev',
-    region:'ap-northeast-2',
+    region: 'ap-northeast-2',
     apiGateway: {
       minimumCompressionSize: 1024,
     },
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
+      NODE_ENV: 'dev',
     },
   },
   functions: {
     hello: {
-      handler: 'src/handler.hello',
+      handler: 'src/handler.endpoint',
       events: [
         {
           http: {
             method: 'get',
-            path: 'hello',
+            path: 'endpoint',
           },
         },
       ],

@@ -17,23 +17,23 @@ module.exports = {
     sourceType: 'module',
   },
   plugins: [
-    '@typescript-eslint'
+    '@typescript-eslint', 'jest',
   ],
   settings: {
-    "import/resolver": {
+    'import/resolver': {
       alias: {
         map: [
-          ["@", "./src"],
+          ['@', './src'],
         ],
         extensions: [
-          ".ts",
-          ".js"
-        ]
-      }
-    }
+          '.ts',
+          '.js',
+        ],
+      },
+    },
   },
   rules: {
-    "import/no-unresolved": [2, {"commonjs": true, "amd": true}],
-    "import/prefer-default-export": "off",
+    'import/no-unresolved': 'off',
+    'import/prefer-default-export': 'off',
   },
 };
