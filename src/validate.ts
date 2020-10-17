@@ -1,7 +1,8 @@
 import { getExtension } from '@/utils';
-import { AvailableType, RequestErrors } from '@/types';
+import { Options } from '@/options';
+import { AvailableType, AvailableOutputType, RequestErrors } from '@/types';
 
-export const validate = (path:string): void => {
+export const validate = (path:string, options: Options): void => {
   const fileType = getExtension(path);
 
   if (!fileType) {
@@ -9,5 +10,11 @@ export const validate = (path:string): void => {
   }
   if (!(fileType in AvailableType)) {
     throw new Error(RequestErrors.UNSUPPORTED_FILE_TYPE);
+  }
+  if (!options.outputPath) {
+    throw new Error(RequestErrors.UNDEFINED_OUTPUT_PATH);
+  }
+  if (!(options.type in AvailableOutputType)) {
+    throw new Error(RequestErrors.UNSUPPORT_OUTPUT_TYPE);
   }
 };

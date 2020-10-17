@@ -2,10 +2,17 @@ export enum AvailableType {
   pdf = 'pdf',
 }
 
+export enum AvailableOutputType {
+  jpg = 'jpg',
+  png = 'png',
+}
+
 export enum RequestErrors {
   UNDIFINED_REQUEST_BODY = 'UNDIFINED_REQUEST_BODY',
   UNDEFINED_FILE_TYPE = 'UNDEFINED_FILE_TYPE',
   UNSUPPORTED_FILE_TYPE = 'UNSUPPORTED_FILE_TYPE',
+  UNDEFINED_OUTPUT_PATH ='UNDEFINED_OUTPUT_PATH',
+  UNSUPPORT_OUTPUT_TYPE='UNSUPPORT_OUTPUT_TYPE'
 }
 
 export enum S3Errors {
