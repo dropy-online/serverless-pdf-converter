@@ -5,16 +5,18 @@ export class S3Client {
   client: S3
 
   constructor() {
+    // TODO set config
     this.client = new S3();
   }
 
-  async getObject(Bucket: string, Key: string): Promise<S3.GetObjectOutput> {
+  async getObject(Bucket: string, Key: string): Promise<S3.Body> {
     const params: S3.GetObjectRequest = {
       Bucket,
       Key,
     };
     try {
-      return await this.client.getObject(params).promise();
+      const response = await this.client.getObject(params).promise();
+      return response.Body;
     } catch (e) {
       throw new Error(S3Errors.FAILED_S3_GET_OBJECT);
     }
@@ -41,5 +43,21 @@ export class S3Client {
     } catch (e) {
       throw new Error(S3Errors.FAILED_S3_DELETE_OBJECT);
     }
+  }
+
+  async emptyBucket(Bucket:string, Prefix:string):Promise<void> {
+    const params: S3.ListObjectsV2Request = {
+      Bucket,
+      Prefix,
+    };
+    const data = await this.client.listObjectsV2(params).promise();
+    const keys = data.Contents.map((content) => content.Key);
+    const deletes = keys.map((key) =>
+      new Promise((resolve, reject) => {
+        this.deleteObject(Bucket, key)
+          .then((deleteData) => resolve(deleteData))
+          .catch((err) => reject(err));
+      }));
+    await Promise.all(deletes);
   }
 }

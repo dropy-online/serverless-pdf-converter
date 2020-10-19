@@ -23,16 +23,17 @@ const serverlessConfiguration: Serverless = {
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
       NODE_ENV: 'dev',
+      BUCKET: '',
     },
   },
   functions: {
     hello: {
-      handler: 'src/handler.endpoint',
+      handler: 'src/index.handler',
       events: [
         {
           http: {
             method: 'get',
-            path: 'endpoint',
+            path: '/{proxy}',
           },
         },
       ],

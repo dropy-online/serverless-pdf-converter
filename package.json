@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "aws-sdk": "^2.771.0",
+    "mime": "^2.4.6",
     "source-map-support": "^0.5.10"
   },
   "devDependencies": {
