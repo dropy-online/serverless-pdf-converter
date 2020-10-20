@@ -24,6 +24,12 @@ const serverlessConfiguration: Serverless = {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
       NODE_ENV: 'dev',
       BUCKET: '',
+      CONFIG: JSON.stringify({
+        maxSize: 1204,
+        minSize: 100,
+        maxQuality: 100,
+        minQuality: 10,
+      }),
     },
   },
   functions: {
