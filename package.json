@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "aws-sdk": "^2.771.0",
+    "gm": "^1.23.1",
     "mime": "^2.4.6",
     "source-map-support": "^0.5.10"
   },
@@ -16,7 +17,7 @@
     "@babel/preset-env": "^7.11.5",
     "@babel/preset-typescript": "^7.10.4",
     "@types/aws-lambda": "^8.10.17",
-    "@types/jest": "^26.0.14",
+    "@types/jest": "^26.0.15",
     "@types/node": "^10.12.18",
     "@types/serverless": "^1.72.5",
     "@typescript-eslint/eslint-plugin": "^4.4.0",
