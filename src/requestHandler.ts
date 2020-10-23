@@ -8,7 +8,7 @@ import { getPdf, getPdfPages } from '@/core';
 import { response, parallelRequest, getPrefix } from '@/utils';
 import { RequestErrors, AvailableType } from '@/types';
 
-export const handler: APIGatewayProxyHandler = async (event) => {
+export const requestHandler: APIGatewayProxyHandler = async (event) => {
   if (!event.pathParameters?.proxy) {
     return response(400, {
       status: 'error',

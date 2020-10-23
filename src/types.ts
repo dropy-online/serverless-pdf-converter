@@ -1,3 +1,9 @@
+export interface Options {
+  type: string;
+  size:number;
+  quality:number;
+}
+
 export enum AvailableType {
   pdf = 'pdf',
 }
@@ -19,6 +25,10 @@ export enum S3Errors {
   FAILED_S3_DELETE_OBJECT = 'FAILED_S3_DELETE_OBJECT',
 }
 
+export enum ConvertErrors {
+  UNDEFINED_PAYLOAD = 'UNDEFINED_PAYLOAD',
+}
+
 export type Error = {
   status:'error',
   error: RequestErrors | S3Errors
@@ -29,3 +39,16 @@ export type APIResponse = {
   statusCode: number;
   body: string;
 };
+
+export interface ConvertPayload {
+  item:string,
+  params:Options
+}
+
+export type ConvertEvent = {
+  payload:ConvertPayload,
+}
+
+export type ConvertResult = {
+  url: string,
+}

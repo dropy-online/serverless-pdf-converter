@@ -1,10 +1,4 @@
-import { AvailableOutputType } from '@/types';
-
-export interface Options {
-  type: string;
-  size:number;
-  quality:number;
-}
+import { AvailableOutputType, Options } from '@/types';
 
 export const defaultOptions: Options = {
   type: AvailableOutputType.png,
