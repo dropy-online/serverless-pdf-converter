@@ -2,6 +2,7 @@ export interface Options {
   type: string;
   size:number;
   quality:number;
+  prefix?: string,
 }
 
 export enum AvailableType {

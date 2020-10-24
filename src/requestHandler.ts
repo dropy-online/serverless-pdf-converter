@@ -28,7 +28,7 @@ export const requestHandler: APIGatewayProxyHandler = async (event) => {
     const pdf = inputType === AvailableType.pdf ? content : await getPdf(inputType, content);
     const pages = await getPdfPages(pdf);
     const options = getOptions(event.queryStringParameters);
-    const urls = await parallelRequest('convertLambda', pages, options);
+    const urls = await parallelRequest('convertLambda', pages, { ...options, prefix });
 
     return response(200, {
       status: 'succeded',
