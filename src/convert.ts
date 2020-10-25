@@ -6,8 +6,8 @@ import { convertToImg } from './core/convertToImg';
 
 type ConvertHandler = Handler<ConvertEvent, ConvertResult> ;
 
-export const convertHandler: ConvertHandler = async (event, context, callback) => {
-  const { item, params } = event.payload;
+export const handler: ConvertHandler = async (event, context, callback) => {
+  const { item, params } = event;
 
   if (!item) {
     callback(ConvertErrors.UNDEFINED_PAYLOAD);

@@ -23,7 +23,9 @@ const serverlessConfiguration: Serverless = {
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
       NODE_ENV: 'dev',
-      BUCKET: '',
+      REGION: 'ap-northeast-2',
+      BUCKET: 'dropy',
+      FUNCTION_NAME: 'dropy-lambda-layer-dev-convert',
       CONFIG: JSON.stringify({
         maxSize: 1204,
         minSize: 100,
@@ -31,9 +33,25 @@ const serverlessConfiguration: Serverless = {
         minQuality: 10,
       }),
     },
+    iamRoleStatements: [{
+      Effect: 'Allow',
+      Action: 's3:GetObject',
+      Resource: 'arn:aws:s3:::dropy/*',
+    },
+    {
+      Effect: 'Allow',
+      Action: 's3:PutObject',
+      Resource: 'arn:aws:s3:::dropy/*',
+    },
+    {
+      Effect: 'Allow',
+      Action: ['lambda:InvokeFunction', 'lambda:InvokeAsync'],
+      Resource: '*',
+    },
+    ],
   },
   functions: {
-    hello: {
+    endpoint: {
       handler: 'src/index.handler',
       events: [
         {
@@ -43,6 +61,9 @@ const serverlessConfiguration: Serverless = {
           },
         },
       ],
+    },
+    convert: {
+      handler: 'src/convert.handler',
     },
   },
 };
