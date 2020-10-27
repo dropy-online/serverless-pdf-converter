@@ -1,15 +1,12 @@
-import { S3 } from 'aws-sdk';
-import fs from 'fs';
-import gm from 'gm';
-import { promisify } from 'util';
+import pdf from 'pdf-parse';
+import { ConvertErrors } from '@/types';
 
-export const getPdfPages = async (content:S3.Body|fs.ReadStream): Promise<number[]> => {
-  const pdf: gm.State = gm(content);
-  const identify = promisify<string, string>(pdf.identify.bind(pdf));
-  const pageStr: string = await identify('%p ');
-  const pageStrArr: string[] = pageStr.split(/\s+/);
-  const pages: number[] = pageStrArr.map((str) => +str)
-    .filter((page) => !Number.isNaN(page));
-
-  return pages;
+export const getPdfPages = async (content:Buffer): Promise<number[]> => {
+  try {
+    const { numpages } = await pdf(content);
+    const pages = Array(numpages).fill().map((_, i) => i + 1);
+    return pages;
+  } catch (e) {
+    throw new Error(ConvertErrors.PDF_PARSING_FAIL);
+  }
 };

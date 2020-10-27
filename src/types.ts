@@ -28,6 +28,7 @@ export enum S3Errors {
 
 export enum ConvertErrors {
   UNDEFINED_PAYLOAD = 'UNDEFINED_PAYLOAD',
+  PDF_PARSING_FAIL = 'PDF_PARSING_FAIL',
 }
 
 export type Error = {

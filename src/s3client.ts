@@ -5,7 +5,6 @@ export class S3Client {
   client: S3
 
   constructor() {
-    // TODO set config
     this.client = new S3();
   }
 
