@@ -4,7 +4,7 @@ import { getType } from 'mime';
 import { S3Client } from '@/s3client';
 import { validate } from '@/validate';
 import { getOptions } from '@/options';
-import { getPdf, getPdfPages } from '@/core';
+import { getPdfBuffer, getPdfPages } from '@/core';
 import { response, parallelRequest, getPrefix } from '@/utils';
 import { RequestErrors, AvailableType } from '@/types';
 
@@ -24,11 +24,12 @@ export const requestHandler: APIGatewayProxyHandler = async (event) => {
     const inputType = getType(key);
     validate(inputType);
 
-    const content = await s3.getObject(bucket, key);
-    const pdf = inputType === AvailableType.pdf ? content : await getPdf(inputType, content);
-    const pages = await getPdfPages(pdf);
+    const buffer = await s3.getObject(bucket, key);
+    const pdfBuffer = inputType === AvailableType.pdf ? buffer : await getPdfBuffer(inputType, buffer);
+    const pages = await getPdfPages(pdfBuffer, process.env.PARALLEL_EXEC_OFFSET);
     const options = getOptions(event.queryStringParameters);
-    const urls = await parallelRequest(process.env.FUNCTION_NAME, pages, { ...options, prefix });
+    const images = await parallelRequest(process.env.PARALLEL_FUNCTION_NAME, pages, options);
+    const urls = await s3.uploadObjects(images, bucket, prefix, options.type);
 
     return response(200, {
       status: 'succeded',

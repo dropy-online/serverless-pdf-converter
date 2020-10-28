@@ -23,9 +23,9 @@ const serverlessConfiguration: Serverless = {
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
       NODE_ENV: 'dev',
-      REGION: 'ap-northeast-2',
       BUCKET: 'dropy',
-      FUNCTION_NAME: 'dropy-lambda-layer-dev-convert',
+      PARALLEL_EXEC_OFFSET: 1,
+      PARALLEL_FUNCTION_NAME: 'dropy-lambda-layer-dev-convert',
       CONFIG: JSON.stringify({
         maxSize: 1204,
         minSize: 100,

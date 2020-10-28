@@ -1,2 +1,3 @@
 export { getPdfPages } from './getPdfPages';
-export { getPdf } from './getPdf';
+export { getPdfBuffer } from './getPdfBuffer';
+export { convertToImg } from './convertToImg';

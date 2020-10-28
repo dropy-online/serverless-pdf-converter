@@ -59,4 +59,16 @@ export class S3Client {
       }));
     await Promise.all(deletes);
   }
+
+  async uploadObjects(array:Buffer[], Bucket:string, prefix:string, format:string):Promise<void> {
+    const uploads = array.map((item, idx) => {
+      const Key = `${prefix}/${idx}.${format}`;
+      return new Promise((resolve, reject) => {
+        this.putObject(item, { Bucket, Key })
+          .then(() => resolve(Key))
+          .catch((err) => reject(err));
+      });
+    });
+    await Promise.all(uploads);
+  }
 }
