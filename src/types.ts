@@ -1,7 +1,9 @@
+import { Handler } from 'aws-lambda';
+
 export interface Options {
   type: string;
-  size:number;
-  quality:number;
+  size: number;
+  quality: number;
   prefix?: string,
 }
 
@@ -42,15 +44,13 @@ export type APIResponse = {
   body: string;
 };
 
-export interface ConvertPayload {
+export interface ConvertEvent {
   item:string,
   params:Options
-}
-
-export type ConvertEvent = {
-  payload:ConvertPayload,
 }
 
 export type ConvertResult = {
   url: string,
 }
+
+export type ConvertHandler = Handler<ConvertEvent, void | Promise<ConvertResult>>;

@@ -4,10 +4,19 @@ import Path from 'path';
 
 describe('getPdfPages()', () => {
   const inputPath = Path.resolve(__dirname, '../mock/test.pdf');
+
   it('should return page number array', async () => {
     expect.hasAssertions();
-    const readStream: fs.ReadStream = fs.createReadStream(inputPath);
-    const result = await getPdfPages(readStream);
+    const buffer = await fs.promises.readFile(inputPath);
+    const result = await getPdfPages(buffer);
     expect(result).toHaveLength(14);
+  });
+
+  it('should return two dimensional array when offset is given', async () => {
+    expect.hasAssertions();
+    const buffer = fs.readFileSync(inputPath);
+    const result = await getPdfPages(buffer, 3);
+    const expected = [[1, 2, 3], [4, 5, 6], [7, 8, 9], [10, 11, 12], [13, 14]];
+    expect(result).toStrictEqual(expected);
   });
 });
