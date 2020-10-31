@@ -34,7 +34,7 @@ export enum ConvertErrors {
 }
 
 export type Error = {
-  status:'error',
+  status: 'error',
   error: RequestErrors | S3Errors
 }
 
@@ -44,13 +44,15 @@ export type APIResponse = {
   body: string;
 };
 
-export interface ConvertEvent {
-  item:string,
-  params:Options
-}
-
 export type ConvertResult = {
-  url: string,
+  page: number,
+  body : Buffer,
 }
 
-export type ConvertHandler = Handler<ConvertEvent, void | Promise<ConvertResult>>;
+export interface ConvertEvent {
+  item: number[],
+  params: Options,
+  buffer: Buffer
+}
+
+export type ConvertHandler = Handler<ConvertEvent, void | ConvertResult[]>;

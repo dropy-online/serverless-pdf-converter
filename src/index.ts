@@ -26,9 +26,9 @@ export const requestHandler: APIGatewayProxyHandler = async (event) => {
 
     const buffer = await s3.getObject(bucket, key);
     const pdfBuffer = inputType === AvailableType.pdf ? buffer : await getPdfBuffer(inputType, buffer);
-    const pages = await getPdfPages(pdfBuffer, parseInt(process.env.PARALLEL_EXEC_OFFSET));
+    const pages = await getPdfPages(pdfBuffer, Number(process.env.PARALLEL_EXEC_OFFSET));
     const options = getOptions(event.queryStringParameters);
-    const images = await parallelRequest(process.env.PARALLEL_FUNCTION_NAME, pages, options);
+    const images = await parallelRequest(process.env.PARALLEL_FUNCTION_NAME, pages, options, pdfBuffer);
     const urls = await s3.uploadObjects(images, bucket, prefix, options.type);
 
     return response(200, {
