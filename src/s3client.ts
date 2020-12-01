@@ -17,7 +17,7 @@ export class S3Client {
       const response = await this.client.getObject(params).promise();
       return response.Body;
     } catch (e) {
-      throw new Error(S3Errors.FAILED_S3_GET_OBJECT);
+      throw S3Errors.FAILED_S3_GET_OBJECT;
     }
   }
 
@@ -28,7 +28,7 @@ export class S3Client {
         Body: file,
       }).promise();
     } catch (e) {
-      throw new Error(S3Errors.FAILED_S3_PUT_OBJECT);
+      throw S3Errors.FAILED_S3_PUT_OBJECT;
     }
   }
 
@@ -40,7 +40,7 @@ export class S3Client {
     try {
       return await this.client.deleteObject(params).promise();
     } catch (e) {
-      throw new Error(S3Errors.FAILED_S3_DELETE_OBJECT);
+      throw S3Errors.FAILED_S3_DELETE_OBJECT;
     }
   }
 

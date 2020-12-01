@@ -28,8 +28,8 @@ const serverlessConfiguration: Serverless = {
       PARALLEL_FUNCTION_NAME: 'dropy-lambda-layer-dev-convert',
       CONFIG: JSON.stringify({
         maxSize: 1204,
-        minSize: 100,
-        maxQuality: 100,
+        minSize: 10,
+        maxQuality: 200,
         minQuality: 10,
       }),
     },

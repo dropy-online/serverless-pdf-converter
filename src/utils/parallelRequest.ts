@@ -2,7 +2,7 @@ import aws from 'aws-sdk';
 
 const lambdaConfig = {
   apiVersion: '2031',
-  endpoint: process.env.NODE_ENV === 'dev' ? 'http://localhost:3002' : 'TODO',
+  endpoint: process.env.NODE_ENV === 'development' ? 'http://localhost:3002' : 'TODO',
 };
 
 const lambdaParams = {
