@@ -1,15 +1,14 @@
 import 'source-map-support/register';
 import { APIGatewayProxyHandler } from 'aws-lambda';
-import { getType } from 'mime';
 import { S3Client } from '@/s3client';
 import { validate } from '@/validate';
 import { getOptions } from '@/options';
-import { getPdfBuffer, getPdfPages } from '@/core';
+import { getPdfPages } from '@/core';
 import { response, parallelRequest, getPrefix } from '@/utils';
-import { RequestErrors, AvailableType } from '@/types';
+import { RequestErrors, PageDivision, ConvertParams } from '@/types';
 
-export const requestHandler: APIGatewayProxyHandler = async (event) => {
-  if (!event.pathParameters?.proxy) {
+export const handler: APIGatewayProxyHandler = async (event) => {
+  if (!event.pathParameters.proxy) {
     return response(400, {
       status: 'error',
       error: RequestErrors.UNDIFINED_PATH_PARAM,
@@ -21,15 +20,21 @@ export const requestHandler: APIGatewayProxyHandler = async (event) => {
   const prefix = getPrefix(key);
 
   try {
-    const inputType = getType(key);
-    validate(inputType);
+    const { ContentType, Body } = await s3.getObject(bucket, key);
 
-    const buffer = await s3.getObject(bucket, key);
-    const pdfBuffer = inputType === AvailableType.pdf ? buffer : await getPdfBuffer(inputType, buffer);
-    const pages = await getPdfPages(pdfBuffer, Number(process.env.PARALLEL_EXEC_OFFSET));
-    const options = getOptions(event.queryStringParameters);
-    const images = await parallelRequest(process.env.PARALLEL_FUNCTION_NAME, pages, options, pdfBuffer);
-    const urls = await s3.uploadObjects(images, bucket, prefix, options.type);
+    validate(ContentType);
+
+    const options = getOptions(event.queryStringParameters || {});
+    const pages = await getPdfPages(
+      Body as Buffer,
+      Number(process.env.PARALLEL_EXEC_OFFSET),
+    );
+
+    const urls = await parallelRequest<PageDivision, ConvertParams>(
+      process.env.PARALLEL_FUNCTION_NAME,
+      pages,
+      { options, key },
+    );
 
     return response(200, {
       status: 'succeded',

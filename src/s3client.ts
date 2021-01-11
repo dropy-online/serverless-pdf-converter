@@ -1,38 +1,46 @@
 import { S3 } from 'aws-sdk';
-import { S3Errors } from '@/types';
+import { PageObject, S3Errors, S3Object } from '@/types';
 
 export class S3Client {
-  client: S3
+  client: S3;
 
   constructor() {
     this.client = new S3();
   }
 
-  async getObject(Bucket: string, Key: string): Promise<S3.Body> {
+  async getObject(Bucket: string, Key: string): Promise<S3Object> {
     const params: S3.GetObjectRequest = {
       Bucket,
       Key,
     };
     try {
-      const response = await this.client.getObject(params).promise();
-      return response.Body;
+      const { ContentType, Body } = (await this.client.getObject(params).promise()) || {};
+      return { ContentType, Body };
     } catch (e) {
       throw S3Errors.FAILED_S3_GET_OBJECT;
     }
   }
 
-  async putObject(file: S3.Body, params: S3.PutObjectRequest): Promise<S3.PutObjectOutput> {
+  async putObject(
+    file: S3.Body,
+    params: S3.PutObjectRequest,
+  ): Promise<S3.PutObjectOutput> {
     try {
-      return await this.client.putObject({
-        ...params,
-        Body: file,
-      }).promise();
+      return await this.client
+        .putObject({
+          ...params,
+          Body: file,
+        })
+        .promise();
     } catch (e) {
       throw S3Errors.FAILED_S3_PUT_OBJECT;
     }
   }
 
-  async deleteObject(Bucket: string, Key: string): Promise<S3.DeleteObjectOutput> {
+  async deleteObject(
+    Bucket: string,
+    Key: string,
+  ): Promise<S3.DeleteObjectOutput> {
     const params: S3.DeleteObjectRequest = {
       Bucket,
       Key,
@@ -51,25 +59,27 @@ export class S3Client {
     };
     const data = await this.client.listObjectsV2(params).promise();
     const keys = data.Contents.map((content) => content.Key);
-    const deletes = keys.map((key) =>
-      new Promise((resolve, reject) => {
-        this.deleteObject(Bucket, key)
-          .then((deleteData) => resolve(deleteData))
-          .catch((err) => reject(err));
-      }));
+    const deletes = keys.map(
+      (key) =>
+        new Promise((resolve, reject) => {
+          this.deleteObject(Bucket, key)
+            .then((deleteData) => resolve(deleteData))
+            .catch((err) => reject(err));
+        }),
+    );
     await Promise.all(deletes);
   }
 
   async uploadObjects(
-    array: Buffer[][],
+    array: PageObject[],
     Bucket: string,
     prefix: string,
     format: string,
   ): Promise<void> {
-    const uploads = array.flat().map((item, idx) => {
-      const Key = `${prefix}/${idx}.${format}`;
+    const uploads = array.flat().map((item) => {
+      const Key = `${prefix}/${item.page}.${format}`;
       return new Promise((resolve, reject) => {
-        this.putObject(item, { Bucket, Key })
+        this.putObject(item.body, { Bucket, Key })
           .then(() => resolve(Key))
           .catch((err) => reject(err));
       });

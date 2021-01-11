@@ -1,16 +1,26 @@
 import 'source-map-support/register';
+import { S3Client } from '@/s3client';
+import { getPrefix } from '@/utils';
 import { ConvertHandler, ConvertErrors } from '@/types';
 import { convertToImg } from './core/convertToImg';
 
-export const handler: ConvertHandler = async (event, context, callback) => {
-  const { item, params, buffer } = event;
+export const handler: ConvertHandler = async (event, _, callback) => {
+  const { item, params: { options, key } = {} } = event;
 
-  if (!item || !params || !buffer) {
+  if (!item || !options || !key) {
     callback(ConvertErrors.UNDEFINED_PAYLOAD);
   }
 
+  const s3 = new S3Client();
+  const bucket = process.env.BUCKET;
+  const prefix = getPrefix(key);
+
   try {
-    const result = await convertToImg(item, params, buffer);
+    const { Body } = await s3.getObject(bucket, key);
+    const images = await convertToImg(item, options, Body as Buffer);
+    // TODO
+    const result = await s3.uploadObjects(images, bucket, prefix, options.type);
+
     callback(null, result);
   } catch (e) {
     callback(e);

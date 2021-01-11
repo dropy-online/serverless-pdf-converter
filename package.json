@@ -9,7 +9,6 @@
   "dependencies": {
     "aws-sdk": "^2.771.0",
     "gm": "^1.23.1",
-    "mime": "^2.4.6",
     "pdf-parse": "^1.1.1",
     "source-map-support": "^0.5.10"
   },
