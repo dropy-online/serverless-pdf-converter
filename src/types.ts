@@ -64,9 +64,13 @@ export type ConvertEvent = {
   params: ConvertParams;
 };
 
-export type ConvertResponse = {
+export type ConvertResult = {
   page: number;
   url: string;
 };
 
-export type ConvertHandler = Handler<ConvertEvent, void | ConvertResponse[]>;
+export type ConvertResponse = {
+  data: ConvertResult[]
+}
+
+export type ConvertHandler = Handler<ConvertEvent, void | ConvertResponse>;

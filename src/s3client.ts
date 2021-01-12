@@ -1,5 +1,7 @@
 import { S3 } from 'aws-sdk';
-import { PageObject, S3Errors, S3Object } from '@/types';
+import {
+  PageObject, ConvertResult, S3Errors, S3Object,
+} from '@/types';
 
 export class S3Client {
   client: S3;
@@ -14,7 +16,9 @@ export class S3Client {
       Key,
     };
     try {
-      const { ContentType, Body } = (await this.client.getObject(params).promise()) || {};
+      const { ContentType, Body } = await this.client
+        .getObject(params)
+        .promise();
       return { ContentType, Body };
     } catch (e) {
       throw S3Errors.FAILED_S3_GET_OBJECT;
@@ -75,15 +79,16 @@ export class S3Client {
     Bucket: string,
     prefix: string,
     format: string,
-  ): Promise<void> {
+  ): Promise<ConvertResult[]> {
     const uploads = array.flat().map((item) => {
       const Key = `${prefix}/${item.page}.${format}`;
-      return new Promise((resolve, reject) => {
+      return new Promise<ConvertResult>((resolve, reject) => {
         this.putObject(item.body, { Bucket, Key })
-          .then(() => resolve(Key))
+          .then(() => resolve({ page: item.page, url: Key }))
           .catch((err) => reject(err));
       });
     });
-    await Promise.all(uploads);
+    const result = await Promise.all(uploads);
+    return result;
   }
 }

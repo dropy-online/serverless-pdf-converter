@@ -15,7 +15,13 @@ describe('getPdfPages()', () => {
   it('should return two dimensional array when offset is given', async () => {
     expect.hasAssertions();
     const result = await getPdfPages(buffer, 3);
-    const expected = [[1, 2, 3], [4, 5, 6], [7, 8, 9], [10, 11, 12], [13, 14]];
+    const expected = [
+      [1, 2, 3],
+      [4, 5, 6],
+      [7, 8, 9],
+      [10, 11, 12],
+      [13, 14],
+    ];
     expect(result).toStrictEqual(expected);
   });
 });

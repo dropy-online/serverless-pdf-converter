@@ -6,27 +6,24 @@ const lambdaConfig = {
     process.env.NODE_ENV === 'development' ? 'http://localhost:3002' : 'TODO',
 };
 
-const lambdaParams = {
-  InvocationType: 'Event',
-};
-
-export const parallelRequest = async <TItems extends any[], TParams>(
-  FunctionName: string,
+export const parallelRequest = async <TItems extends any[], TParams, TResult>(
+  functionName: string,
   items: TItems,
   params: TParams,
-): Promise<any[]> => {
+): Promise<TResult[]> => {
   const lambda = new aws.Lambda(lambdaConfig);
   const requests = items.map(
     (item) =>
-      new Promise((resolve, reject) =>
+      new Promise<TResult>((resolve, reject) => {
         lambda.invoke(
           {
-            ...lambdaParams,
-            FunctionName,
+            FunctionName: functionName,
             Payload: JSON.stringify({ item, params }),
           },
-          (error, data) => (error ? reject(error) : resolve(data.Payload)),
-        )),
+          (error, data) =>
+            (error ? reject(error) : resolve(data.Payload as TResult)),
+        );
+      }),
   );
   const result = await Promise.all(requests);
   return result;

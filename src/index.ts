@@ -5,7 +5,12 @@ import { validate } from '@/validate';
 import { getOptions } from '@/options';
 import { getPdfPages } from '@/core';
 import { response, parallelRequest, getPrefix } from '@/utils';
-import { RequestErrors, PageDivision, ConvertParams } from '@/types';
+import {
+  RequestErrors,
+  PageDivision,
+  ConvertParams,
+  ConvertResponse,
+} from '@/types';
 
 export const handler: APIGatewayProxyHandler = async (event) => {
   if (!event.pathParameters.proxy) {
@@ -30,11 +35,11 @@ export const handler: APIGatewayProxyHandler = async (event) => {
       Number(process.env.PARALLEL_EXEC_OFFSET),
     );
 
-    const urls = await parallelRequest<PageDivision, ConvertParams>(
-      process.env.PARALLEL_FUNCTION_NAME,
-      pages,
-      { options, key },
-    );
+    const urls = await parallelRequest<
+      PageDivision,
+      ConvertParams,
+      ConvertResponse[]
+    >(process.env.PARALLEL_FUNCTION_NAME, pages, { options, key });
 
     return response(200, {
       status: 'succeded',
