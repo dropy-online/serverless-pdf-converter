@@ -2,7 +2,7 @@ import { AvailableOutputType, Options } from '@/types';
 
 export const defaultOptions: Options = {
   type: AvailableOutputType.png,
-  size: 100,
+  size: 1000,
   quality: 100,
 };
 

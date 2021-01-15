@@ -14,17 +14,15 @@ const serverlessConfiguration: Serverless = {
   plugins: ['serverless-webpack', 'serverless-offline'],
   provider: {
     name: 'aws',
-    runtime: 'nodejs12.x',
-    stage: 'dev',
+    runtime: 'nodejs10.x',
     region: 'ap-northeast-2',
     apiGateway: {
       minimumCompressionSize: 1024,
     },
     environment: {
-      AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
-      NODE_ENV: 'dev',
+      REGION: 'ap-northeast-2',
       BUCKET: 'dropy',
-      PARALLEL_EXEC_OFFSET: 1,
+      PARALLEL_EXEC_OFFSET: 3,
       PARALLEL_FUNCTION_NAME: 'dropy-lambda-layer-dev-convert',
       CONFIG: JSON.stringify({
         maxSize: 1204,

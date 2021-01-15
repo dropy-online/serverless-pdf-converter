@@ -7,7 +7,7 @@ export const getPdfPages = async (
 ): Promise<PageDivision> => {
   try {
     const { numpages: length } = await pdf(buffer);
-    const pages = Array.from({ length }, (_, i) => i + 1);
+    const pages = Array.from({ length }, (_, i) => i);
     return Array(Math.ceil(length / offset))
       .fill(0)
       .map(() => pages.splice(0, offset));
