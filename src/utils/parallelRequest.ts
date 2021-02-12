@@ -11,7 +11,7 @@ const lambdaConfig = {
 export const parallelRequest = async <TItems extends any[], TParams, TResult>(
   functionName: string,
   items: TItems,
-  params: TParams,
+  params: TParams
 ): Promise<TResult[]> => {
   const lambda = new aws.Lambda(lambdaConfig);
   const requests = items.map(
@@ -22,8 +22,7 @@ export const parallelRequest = async <TItems extends any[], TParams, TResult>(
             FunctionName: functionName,
             Payload: JSON.stringify({ item, params }),
           },
-          (error, data) =>
-            error ? reject(error) : resolve(data.Payload as TResult)
+          (error, data) => (error ? reject(error) : resolve(data.Payload as TResult))
         );
       })
   );

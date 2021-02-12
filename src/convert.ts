@@ -18,7 +18,7 @@ export const handler: ConvertHandler = async (event, _, callback) => {
   try {
     const { Body } = await s3.getObject(bucket, key);
     const images = await convertToImg(item, options, Body as Buffer);
-    const result = await s3.uploadObjects(images, bucket, prefix, options.type);
+    const result = await s3.uploadObjects(images, bucket, prefix, options.format);
 
     callback(null, { data: result });
   } catch (e) {

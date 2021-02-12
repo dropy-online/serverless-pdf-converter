@@ -1,7 +1,5 @@
 import { S3 } from 'aws-sdk';
-import {
-  PageObject, ConvertResult, S3Errors, S3Object,
-} from '@/types';
+import { PageObject, ConvertResult, S3Errors, S3Object } from '@/types';
 
 export class S3Client {
   client: S3;
@@ -16,19 +14,14 @@ export class S3Client {
       Key,
     };
     try {
-      const { ContentType, Body } = await this.client
-        .getObject(params)
-        .promise();
+      const { ContentType, Body } = await this.client.getObject(params).promise();
       return { ContentType, Body };
     } catch (e) {
       throw S3Errors.FAILED_S3_GET_OBJECT;
     }
   }
 
-  async putObject(
-    file: S3.Body,
-    params: S3.PutObjectRequest,
-  ): Promise<S3.PutObjectOutput> {
+  async putObject(file: S3.Body, params: S3.PutObjectRequest): Promise<S3.PutObjectOutput> {
     try {
       return await this.client
         .putObject({
@@ -41,10 +34,7 @@ export class S3Client {
     }
   }
 
-  async deleteObject(
-    Bucket: string,
-    Key: string,
-  ): Promise<S3.DeleteObjectOutput> {
+  async deleteObject(Bucket: string, Key: string): Promise<S3.DeleteObjectOutput> {
     const params: S3.DeleteObjectRequest = {
       Bucket,
       Key,
@@ -69,7 +59,7 @@ export class S3Client {
           this.deleteObject(Bucket, key)
             .then((deleteData) => resolve(deleteData))
             .catch((err) => reject(err));
-        }),
+        })
     );
     await Promise.all(deletes);
   }
@@ -78,12 +68,12 @@ export class S3Client {
     array: PageObject[],
     Bucket: string,
     prefix: string,
-    format: string,
+    format: string
   ): Promise<ConvertResult[]> {
     const uploads = array.flat().map((item) => {
       const Key = `${prefix}/${item.page}.${format}`;
       return new Promise<ConvertResult>((resolve, reject) => {
-        this.putObject(item.body, { Bucket, Key })
+        this.putObject(item.body, { Bucket, Key, ACL: 'public-read' })
           .then(() => resolve({ page: item.page, url: Key }))
           .catch((err) => reject(err));
       });

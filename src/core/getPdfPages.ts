@@ -1,10 +1,7 @@
 import pdf from 'pdf-parse';
 import { ConvertErrors, PageDivision } from '@/types';
 
-export const getPdfPages = async (
-  buffer: Buffer,
-  offset = 1,
-): Promise<PageDivision> => {
+export const getPdfPages = async (buffer: Buffer, offset = 1): Promise<PageDivision> => {
   try {
     const { numpages: length } = await pdf(buffer);
     const pages = Array.from({ length }, (_, i) => i);

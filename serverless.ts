@@ -15,10 +15,8 @@ const serverlessConfiguration: Serverless = {
   provider: {
     name: 'aws',
     runtime: 'nodejs10.x',
+    stage: process.env.NODE_ENV || 'development',
     region: 'ap-northeast-2',
-    apiGateway: {
-      minimumCompressionSize: 1024,
-    },
     environment: {
       REGION: 'ap-northeast-2',
       BUCKET: 'dropy',
@@ -31,21 +29,17 @@ const serverlessConfiguration: Serverless = {
         minQuality: 10,
       }),
     },
-    iamRoleStatements: [{
-      Effect: 'Allow',
-      Action: 's3:GetObject',
-      Resource: 'arn:aws:s3:::dropy/*',
-    },
-    {
-      Effect: 'Allow',
-      Action: 's3:PutObject',
-      Resource: 'arn:aws:s3:::dropy/*',
-    },
-    {
-      Effect: 'Allow',
-      Action: ['lambda:InvokeFunction', 'lambda:InvokeAsync'],
-      Resource: '*',
-    },
+    iamRoleStatements: [
+      {
+        Effect: 'Allow',
+        Action: ['s3:GetObject', 's3:PutObject'],
+        Resource: `arn:aws:s3:::${process.env.BUKET}/*`,
+      },
+      {
+        Effect: 'Allow',
+        Action: ['lambda:InvokeFunction', 'lambda:InvokeAsync'],
+        Resource: '*',
+      },
     ],
   },
   functions: {
@@ -55,7 +49,18 @@ const serverlessConfiguration: Serverless = {
         {
           http: {
             method: 'get',
-            path: '/{proxy}',
+            cors: true,
+            path: '/v1/convert',
+            request: {
+              parameters: {
+                querystrings: {
+                  key: true,
+                  format: true,
+                  size: true,
+                  quality: true,
+                },
+              },
+            },
           },
         },
       ],

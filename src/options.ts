@@ -1,26 +1,24 @@
 import { AvailableOutputType, Options } from '@/types';
 
 export const defaultOptions: Options = {
-  type: AvailableOutputType.png,
+  format: AvailableOutputType.png,
   size: 1000,
   quality: 100,
 };
 
 const config = JSON.parse(process.env.CONFIG);
 
-const getType = (type?: string): string =>
-  (type in AvailableOutputType ? type : defaultOptions.type);
+const getFormat = (format?: string): string =>
+  format in AvailableOutputType ? format : defaultOptions.format;
 
 const getSize = (size?: number): number =>
-  (size < +config.maxSize && size > +config.minSize ? size : defaultOptions.size);
+  size < +config.maxSize && size > +config.minSize ? size : defaultOptions.size;
 
 const getQuality = (quality?: number): number =>
-  (quality < +config.maxQuality && quality > +config.minQuality
-    ? quality
-    : defaultOptions.quality);
+  quality < +config.maxQuality && quality > +config.minQuality ? quality : defaultOptions.quality;
 
-export const getOptions = (params): Options => ({
-  type: getType(params.type),
+export const getOptions = (params: Partial<Options>): Options => ({
+  format: getFormat(params.format),
   size: getSize(params.size),
   quality: getQuality(params.quality),
 });

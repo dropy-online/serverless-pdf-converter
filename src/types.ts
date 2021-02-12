@@ -2,7 +2,7 @@ import { Handler } from 'aws-lambda';
 import { S3 } from 'aws-sdk';
 
 export interface Options {
-  type: string;
+  format: string;
   size: number;
   quality: number;
   prefix?: string;
@@ -18,7 +18,7 @@ export enum AvailableOutputType {
 }
 
 export enum RequestErrors {
-  UNDIFINED_PATH_PARAM = 'UNDIFINED_PATH_PARAM',
+  UNDEFINED_QUERY_PARAMS = 'UNDIFINED_PATH_PARAM',
   UNDEFINED_FILE_TYPE = 'UNDEFINED_FILE_TYPE',
   UNSUPPORTED_FILE_TYPE = 'UNSUPPORTED_FILE_TYPE',
 }
@@ -54,7 +54,7 @@ export type PageDivision = number[][];
 
 export type PageObject = {
   page: number;
-  body: Buffer
+  body: Buffer;
 };
 
 export type ConvertParams = { options: Options; key: string };
@@ -70,7 +70,7 @@ export type ConvertResult = {
 };
 
 export type ConvertResponse = {
-  data: ConvertResult[]
-}
+  data: ConvertResult[];
+};
 
 export type ConvertHandler = Handler<ConvertEvent, void | ConvertResponse>;
