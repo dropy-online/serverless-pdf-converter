@@ -17,7 +17,7 @@ export class S3Client {
       const { ContentType, Body } = await this.client.getObject(params).promise();
       return { ContentType, Body };
     } catch (e) {
-      throw S3Errors.FAILED_S3_GET_OBJECT;
+      throw JSON.stringify({ code: S3Errors.FAILED_S3_GET_OBJECT, message: e });
     }
   }
 
@@ -30,7 +30,7 @@ export class S3Client {
         })
         .promise();
     } catch (e) {
-      throw S3Errors.FAILED_S3_PUT_OBJECT;
+      throw JSON.stringify({ code: S3Errors.FAILED_S3_PUT_OBJECT, message: e });
     }
   }
 
@@ -42,7 +42,7 @@ export class S3Client {
     try {
       return await this.client.deleteObject(params).promise();
     } catch (e) {
-      throw S3Errors.FAILED_S3_DELETE_OBJECT;
+      throw JSON.stringify({ code: S3Errors.FAILED_S3_DELETE_OBJECT, message: e });
     }
   }
 
@@ -67,11 +67,11 @@ export class S3Client {
   async uploadObjects(
     array: PageObject[],
     Bucket: string,
-    prefix: string,
+    prefix: string | undefined,
     format: string
   ): Promise<ConvertResult[]> {
     const uploads = array.flat().map((item) => {
-      const Key = `${prefix}/${item.page}.${format}`;
+      const Key = `${prefix ? prefix + '/' : ''}${item.page}.${format}`;
       return new Promise<ConvertResult>((resolve, reject) => {
         this.putObject(item.body, { Bucket, Key, ACL: 'public-read' })
           .then(() => resolve({ page: item.page, url: Key }))
