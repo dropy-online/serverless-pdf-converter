@@ -1,5 +1,6 @@
 import type { Serverless } from 'serverless/aws';
 
+/* eslint-disable no-template-curly-in-string */
 const serverlessConfiguration: Serverless = {
   service: {
     name: 'dropy-lambda-layer',
@@ -14,14 +15,15 @@ const serverlessConfiguration: Serverless = {
   plugins: ['serverless-webpack', 'serverless-offline'],
   provider: {
     name: 'aws',
-    runtime: 'nodejs10.x',
-    stage: process.env.NODE_ENV || 'development',
+    runtime: 'nodejs12.x',
     region: 'ap-northeast-2',
+    stage: "${opt:stage, 'dev'}",
     environment: {
-      REGION: 'ap-northeast-2',
       BUCKET: 'dropy',
+      REGION: '${self:provider.region}',
+      STAGE: '${self:provider.stage}',
       PARALLEL_EXEC_OFFSET: 3,
-      PARALLEL_FUNCTION_NAME: 'dropy-lambda-layer-dev-convert',
+      PARALLEL_FUNCTION_NAME: '${self:service.name}-${self:provider.stage}-convert',
       CONFIG: JSON.stringify({
         maxSize: 1204,
         minSize: 10,
@@ -32,8 +34,8 @@ const serverlessConfiguration: Serverless = {
     iamRoleStatements: [
       {
         Effect: 'Allow',
-        Action: ['s3:GetObject', 's3:PutObject'],
-        Resource: `arn:aws:s3:::${process.env.BUKET}/*`,
+        Action: 's3:*',
+        Resource: 'arn:aws:s3:::*',
       },
       {
         Effect: 'Allow',
@@ -44,7 +46,10 @@ const serverlessConfiguration: Serverless = {
   },
   functions: {
     endpoint: {
+      memorySize: 1024,
+      timeout: 600,
       handler: 'src/index.handler',
+      layers: ['arn:aws:lambda:ap-northeast-2:073744365895:layer:image-magick:2'],
       events: [
         {
           http: {
@@ -66,7 +71,10 @@ const serverlessConfiguration: Serverless = {
       ],
     },
     convert: {
+      memorySize: 1024,
+      timeout: 600,
       handler: 'src/convert.handler',
+      layers: ['arn:aws:lambda:ap-northeast-2:073744365895:layer:image-magick:2'],
     },
   },
 };

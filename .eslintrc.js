@@ -38,5 +38,6 @@ module.exports = {
     'jest/no-commented-out-tests': 'off',
     'comma-dangle': 'off',
     'no-confusing-arrow': 'off',
+    'prefer-template': 'off',
   },
 };
