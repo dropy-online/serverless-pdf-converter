@@ -3,7 +3,7 @@ import aws from 'aws-sdk';
 const lambdaConfig = {
   apiVersion: '2031',
   endpoint:
-    process.env.NODE_ENV === 'development'
+    process.env.STAGE === 'dev'
       ? 'http://localhost:3002'
       : `https://lambda.${process.env.REGION}.amazonaws.com`,
 };
@@ -22,7 +22,7 @@ export const parallelRequest = async <TItems extends any[], TParams, TResult>(
             FunctionName: functionName,
             Payload: JSON.stringify({ item, params }),
           },
-          (error, data) => (error ? reject(error) : resolve(data.Payload as TResult))
+          (error, data) => (error ? reject(error) : resolve(JSON.parse(data.Payload as string)))
         );
       })
   );
