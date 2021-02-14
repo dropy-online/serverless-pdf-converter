@@ -1,5 +1,8 @@
-import { Options, PageObject } from '@/types';
-import gm from 'gm';
+import { Options, PageObject, ConvertErrors } from '@/types';
+import { createError } from '@/utils';
+import GM from 'gm';
+
+const gm = GM.subClass({ imageMagick: true });
 
 export const convertToImg = async (
   pages: number[],
@@ -15,10 +18,15 @@ export const convertToImg = async (
           .resize(size)
           .quality(quality)
           .toBuffer(format, (error, imgBuffer) =>
-            error ? reject(error) : resolve({ page, body: imgBuffer })
+            error
+              ? reject(
+                  createError({ code: ConvertErrors.FAILED_CONVERT_PAGE, message: error.message })
+                )
+              : resolve({ page, body: imgBuffer })
           )
       )
   );
+
   const bufferArr = await Promise.all(result);
   return bufferArr;
 };

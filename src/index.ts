@@ -5,13 +5,22 @@ import { validate } from '@/validate';
 import { getOptions } from '@/options';
 import { getPdfPages } from '@/core';
 import { response, parallelRequest, getPrefix } from '@/utils';
-import { RequestErrors, PageDivision, ConvertParams, ConvertResponse } from '@/types';
+import {
+  RequestErrors,
+  ErrorBody,
+  SuccessBody,
+  PageDivision,
+  ConvertParams,
+  ConvertResponse,
+} from '@/types';
 
 export const handler: APIGatewayProxyHandler = async (event) => {
-  if (!event.queryStringParameters.key) {
-    return response(400, {
+  if (!event.queryStringParameters?.key) {
+    return response<ErrorBody>(400, {
       status: 'error',
-      error: RequestErrors.UNDEFINED_QUERY_PARAMS,
+      error: {
+        code: RequestErrors.UNDEFINED_QUERY_PARAMS,
+      },
     });
   }
   const s3 = new S3Client();
@@ -33,16 +42,16 @@ export const handler: APIGatewayProxyHandler = async (event) => {
       { options, key }
     );
 
-    return response(200, {
+    return response<SuccessBody>(200, {
       status: 'succeded',
-      body: urls,
+      data: urls,
     });
   } catch (error) {
     await s3.emptyBucket(bucket, prefix);
 
-    return response(400, {
+    return response<ErrorBody>(400, {
       status: 'error',
-      error,
+      error: JSON.parse(error),
     });
   }
 };

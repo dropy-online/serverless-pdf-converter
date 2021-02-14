@@ -1,4 +1,5 @@
 import pdf from 'pdf-parse';
+import { createError } from '@/utils';
 import { ConvertErrors, PageDivision } from '@/types';
 
 export const getPdfPages = async (buffer: Buffer, offset = 1): Promise<PageDivision> => {
@@ -9,6 +10,6 @@ export const getPdfPages = async (buffer: Buffer, offset = 1): Promise<PageDivis
       .fill(0)
       .map(() => pages.splice(0, offset));
   } catch (e) {
-    throw new Error(ConvertErrors.PDF_PARSING_FAIL);
+    throw createError({ code: ConvertErrors.FAILED_PARSE_PDF, message: e });
   }
 };

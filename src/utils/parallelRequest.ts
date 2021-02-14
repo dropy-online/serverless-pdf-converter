@@ -22,7 +22,11 @@ export const parallelRequest = async <TItems extends any[], TParams, TResult>(
             FunctionName: functionName,
             Payload: JSON.stringify({ item, params }),
           },
-          (error, data) => (error ? reject(error) : resolve(JSON.parse(data.Payload as string)))
+          (apiError, data) => {
+            const payload = JSON.parse(data.Payload as string) || {};
+            const error = apiError || payload.errorMessage;
+            return error ? reject(error) : resolve(payload);
+          }
         );
       })
   );

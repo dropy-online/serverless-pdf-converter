@@ -1,6 +1,6 @@
 import { APIResponse } from '@/types';
 
-export const response = (statusCode: number, body: any): APIResponse => {
+export const response = <TBody>(statusCode: number, body: TBody): APIResponse => {
   const headers = {
     'Access-Control-Allow-Origin': '*',
   };

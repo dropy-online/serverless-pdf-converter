@@ -1,4 +1,5 @@
 import { S3 } from 'aws-sdk';
+import { createError } from '@/utils';
 import { PageObject, ConvertResult, S3Errors, S3Object } from '@/types';
 
 export class S3Client {
@@ -17,7 +18,7 @@ export class S3Client {
       const { ContentType, Body } = await this.client.getObject(params).promise();
       return { ContentType, Body };
     } catch (e) {
-      throw JSON.stringify({ code: S3Errors.FAILED_S3_GET_OBJECT, message: e });
+      throw createError({ code: S3Errors.FAILED_S3_GET_OBJECT, message: e });
     }
   }
 
@@ -30,7 +31,7 @@ export class S3Client {
         })
         .promise();
     } catch (e) {
-      throw JSON.stringify({ code: S3Errors.FAILED_S3_PUT_OBJECT, message: e });
+      throw createError({ code: S3Errors.FAILED_S3_PUT_OBJECT, message: e });
     }
   }
 
@@ -42,7 +43,7 @@ export class S3Client {
     try {
       return await this.client.deleteObject(params).promise();
     } catch (e) {
-      throw JSON.stringify({ code: S3Errors.FAILED_S3_DELETE_OBJECT, message: e });
+      throw createError({ code: S3Errors.FAILED_S3_DELETE_OBJECT, message: e });
     }
   }
 
