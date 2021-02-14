@@ -1,6 +1,6 @@
-import { getPdfPages } from '@/core';
 import fs from 'fs';
 import Path from 'path';
+import { getPdfPages } from '../../src/core';
 
 describe('getPdfPages()', () => {
   const inputPath = Path.resolve(__dirname, '../mock/test.pdf');

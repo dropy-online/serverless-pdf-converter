@@ -1,5 +1,5 @@
-import { parallelRequest } from '@/utils';
 import { Lambda as LambdaMock } from 'aws-sdk';
+import { parallelRequest } from '../../src/utils';
 
 jest.mock('aws-sdk', () => {
   const mock = { invoke: jest.fn() };
@@ -32,6 +32,7 @@ describe('parallelRequest()', () => {
     expect.hasAssertions();
 
     const error = 'error';
+
     (Lambda.invoke as jest.Mocked<any>).mockImplementation((_, cb) => {
       cb(new Error(error));
     });

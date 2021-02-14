@@ -10,18 +10,17 @@
     "outDir": "lib",
     "inlineSources": true,
     "esModuleInterop": true,
-    "sourceRoot": "/",
     "baseUrl": "./",
     "paths": {
       "@/*": ["src/*"],
     }
   },
-  "include": ["./**/*.ts"],
   "exclude": [
+    "tests/*",
     "node_modules/**/*",
     ".serverless/**/*",
     ".webpack/**/*",
     "_warmup/**/*",
-    ".vscode/**/*"
+    ".vscode/**/*",
   ]
 }
