@@ -48,7 +48,7 @@ export type ConvertResponse = {
 export type ConvertHandler = Handler<ConvertEvent, void | ConvertResponse>;
 
 export enum RequestErrors {
-  UNDEFINED_QUERY_PARAMS = 'UNDIFINED_PATH_PARAM',
+  UNDEFINED_QUERY_PARAMS = 'UNDEFINED_QUERY_PARAMS',
   UNDEFINED_FILE_TYPE = 'UNDEFINED_FILE_TYPE',
   UNSUPPORTED_FILE_TYPE = 'UNSUPPORTED_FILE_TYPE',
 }
