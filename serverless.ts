@@ -15,7 +15,7 @@ const serverlessConfiguration: Serverless = {
   plugins: ['serverless-webpack', 'serverless-offline'],
   provider: {
     name: 'aws',
-    runtime: 'nodejs12.x',
+    runtime: 'nodejs10.x',
     region: 'ap-northeast-2',
     stage: "${opt:stage, 'dev'}",
     environment: {
@@ -47,9 +47,8 @@ const serverlessConfiguration: Serverless = {
   functions: {
     endpoint: {
       memorySize: 1024,
-      timeout: 600,
+      timeout: 30,
       handler: 'src/index.handler',
-      layers: ['arn:aws:lambda:ap-northeast-2:073744365895:layer:image-magick:2'],
       events: [
         {
           http: {
@@ -71,10 +70,13 @@ const serverlessConfiguration: Serverless = {
       ],
     },
     convert: {
-      memorySize: 1024,
-      timeout: 600,
+      memorySize: 2048,
+      timeout: 900,
       handler: 'src/convert.handler',
-      layers: ['arn:aws:lambda:ap-northeast-2:073744365895:layer:image-magick:2'],
+      layers: [
+        'arn:aws:lambda:ap-northeast-2:073744365895:layer:ghostscript:1',
+        'arn:aws:lambda:ap-northeast-2:073744365895:layer:image-magick:1',
+      ],
     },
   },
 };
