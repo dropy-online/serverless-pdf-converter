@@ -71,14 +71,16 @@ export class S3Client {
     prefix: string | undefined,
     format: string
   ): Promise<ConvertResult[]> {
-    const uploads = array.flat().map((item) => {
-      const Key = `${prefix ? prefix + '/' : ''}${item.page}.${format}`;
-      return new Promise<ConvertResult>((resolve, reject) => {
-        this.putObject(item.body, { Bucket, Key, ACL: 'public-read' })
-          .then(() => resolve({ page: item.page, url: Key }))
-          .catch((err) => reject(err));
+    const uploads = array
+      .reduce((acc, val) => acc.concat(val), [])
+      .map((item) => {
+        const Key = `${prefix ? prefix + '/' : ''}${item.page}.${format}`;
+        return new Promise<ConvertResult>((resolve, reject) => {
+          this.putObject(item.body, { Bucket, Key, ACL: 'public-read' })
+            .then(() => resolve({ page: item.page, url: Key }))
+            .catch((err) => reject(err));
+        });
       });
-    });
     const result = await Promise.all(uploads);
     return result;
   }
