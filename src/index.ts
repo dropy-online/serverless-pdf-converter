@@ -1,9 +1,6 @@
 import 'source-map-support/register';
 import { APIGatewayProxyHandler } from 'aws-lambda';
-import { S3Client } from '@/s3client';
-import { validate } from '@/validate';
-import { getOptions } from '@/options';
-import { getPdfPages } from '@/core';
+import { S3Client, validate, getPdfPages, getOptions } from '@/core';
 import { response, parallelRequest, getPrefix } from '@/utils';
 import {
   RequestErrors,
@@ -12,11 +9,12 @@ import {
   PageDivision,
   ConvertParams,
   ConvertResponse,
+  ConvertResult,
 } from '@/types';
 
 export const handler: APIGatewayProxyHandler = async (event) => {
   if (!event.queryStringParameters?.key) {
-    return response<ErrorBody>(400, {
+    return response<ErrorBody>(500, {
       status: 'error',
       error: {
         code: RequestErrors.UNDEFINED_QUERY_PARAMS,
@@ -34,24 +32,30 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     validate(ContentType);
 
     const options = getOptions(event.queryStringParameters || {});
-    const pages = await getPdfPages(Body as Buffer, Number(process.env.PARALLEL_EXEC_OFFSET));
-
-    const urls = await parallelRequest<PageDivision, ConvertParams, ConvertResponse[]>(
+    const pageDivision = await getPdfPages(
+      Body as Buffer,
+      Number(process.env.PARALLEL_EXEC_OFFSET)
+    );
+    const result = await parallelRequest<PageDivision, ConvertParams, ConvertResponse>(
       process.env.PARALLEL_FUNCTION_NAME,
-      pages,
+      pageDivision,
       { options, key }
     );
+    const data = result.reduce((acc: ConvertResult[], res) => acc.concat(res.data), []);
 
     return response<SuccessBody>(200, {
       status: 'succeded',
-      data: urls,
+      data,
     });
-  } catch (error) {
+  } catch (e) {
     await s3.emptyBucket(bucket, prefix);
 
-    return response<ErrorBody>(400, {
+    const error = typeof e === 'string' ? JSON.parse(e) : e;
+    const statusCode: number = error?.message?.statusCode || 500;
+
+    return response<ErrorBody>(statusCode, {
       status: 'error',
-      error: JSON.parse(error),
+      error,
     });
   }
 };

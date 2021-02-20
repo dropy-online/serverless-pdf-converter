@@ -1,2 +1,5 @@
-export { getPdfPages } from './getPdfPages';
-export { convertToImg } from './convertToImg';
+export * from './getPdfPages';
+export * from './convertToImg';
+export * from './s3Client';
+export * from './validate';
+export * from './options';

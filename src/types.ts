@@ -5,7 +5,6 @@ export interface Options {
   format: string;
   size: number;
   quality: number;
-  prefix?: string;
 }
 
 export enum AvailableType {
@@ -77,7 +76,7 @@ export type ErrorBody = {
 
 export type SuccessBody = {
   status: 'succeded';
-  data: ConvertResponse[][];
+  data: ConvertResult[];
 };
 
 export type APIResponse = {

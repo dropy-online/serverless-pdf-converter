@@ -1,5 +1,5 @@
 import 'source-map-support/register';
-import { S3Client } from '@/s3client';
+import { S3Client } from '@/core';
 import { getPrefix, createError } from '@/utils';
 import { ConvertHandler, ConvertErrors } from '@/types';
 import { convertToImg } from './core/convertToImg';
@@ -8,7 +8,7 @@ export const handler: ConvertHandler = async (event, _, callback) => {
   const { item, params: { options, key } = {} } = event;
 
   if (!item || !options || !key) {
-    callback(createError({ code: ConvertErrors.UNDEFINED_CONVERT_PAYLOAD }));
+    callback(createError({ code: ConvertErrors.UNDEFINED_CONVERT_PAYLOAD }, true) as Error);
   }
 
   const s3 = new S3Client();
@@ -23,6 +23,6 @@ export const handler: ConvertHandler = async (event, _, callback) => {
 
     callback(null, { data: result });
   } catch (e) {
-    callback(e);
+    callback(createError(e, true) as Error);
   }
 };

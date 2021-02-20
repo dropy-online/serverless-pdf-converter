@@ -1,3 +1,4 @@
 import { ErrorInfo } from '@/types';
 
-export const createError = (error: ErrorInfo): Error => new Error(JSON.stringify(error));
+export const createError = (error: ErrorInfo, newError?: boolean): Error | ErrorInfo =>
+  newError ? Error(JSON.stringify(error)) : error;
