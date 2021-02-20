@@ -30,6 +30,7 @@ const serverlessConfiguration: Serverless = {
         quality: 100,
         density: 200,
         division: 3,
+        pathname: 'images',
       }),
     },
     iamRoleStatements: [
@@ -64,6 +65,7 @@ const serverlessConfiguration: Serverless = {
                   size: true,
                   quality: true,
                   division: true,
+                  pathname: true,
                 },
               },
             },

@@ -1,5 +1,5 @@
 import { S3 } from 'aws-sdk';
-import { createError } from '@/utils';
+import { createError, createObjectKey } from '@/utils';
 import { PageObject, ConvertResult, S3Errors, S3Object } from '@/types';
 
 export class S3Client {
@@ -47,7 +47,7 @@ export class S3Client {
     }
   }
 
-  async emptyBucket(Bucket: string, Prefix: string): Promise<void> {
+  async emptyBucket(Bucket: string, Prefix: string | undefined): Promise<void> {
     const params: S3.ListObjectsV2Request = {
       Bucket,
       Prefix,
@@ -74,7 +74,7 @@ export class S3Client {
     const uploads = array
       .reduce((acc, val) => acc.concat(val), [])
       .map((item) => {
-        const Key = `${prefix ? prefix + '/' : ''}${item.page}.${format}`;
+        const Key = createObjectKey(prefix, item.page, format);
         return new Promise<ConvertResult>((resolve, reject) => {
           this.putObject(item.body, { Bucket, Key, ACL: 'public-read' })
             .then(() => resolve({ page: item.page, url: Key }))

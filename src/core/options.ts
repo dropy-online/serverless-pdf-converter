@@ -12,10 +12,14 @@ const getDensity = (density?: Options['density']) => density || defaultOptions.d
 
 const getDivision = (division?: Options['division']) => division || defaultOptions.division;
 
+const getPathname = (pathname?: Options['pathname']) =>
+  pathname === undefined ? defaultOptions.pathname : pathname;
+
 export const getOptions = (params: Partial<Options>): Options => ({
   format: getFormat(params.format),
   size: getSize(params.size),
   quality: getQuality(params.quality),
   density: getDensity(params.density),
   division: getDivision(params.division),
+  pathname: getPathname(params.pathname),
 });

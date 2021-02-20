@@ -7,6 +7,7 @@ export interface Options {
   quality?: number;
   density: number;
   division?: number;
+  pathname?: string | null;
 }
 
 export interface QueryParams extends Options {

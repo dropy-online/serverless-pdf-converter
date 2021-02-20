@@ -23,15 +23,16 @@ export const handler: APIGatewayProxyHandler = async (event) => {
   }
   const s3 = new S3Client();
   const bucket = process.env.BUCKET;
-  const { key } = event.queryStringParameters;
-  const prefix = getPrefix(key);
+  const { key: encodedKey } = event.queryStringParameters;
+  const key = decodeURIComponent(encodedKey);
+  const options = getOptions(event.queryStringParameters || {});
+  const prefix = getPrefix(key, options.pathname);
 
   try {
     const { ContentType, Body } = await s3.getObject(bucket, key);
 
     validate(ContentType);
 
-    const options = getOptions(event.queryStringParameters || {});
     const pageDivision = await getPdfPages(Body as Buffer, options.division);
     const result = await parallelRequest<PageDivision, ConvertParams, ConvertResponse>(
       process.env.CONVERT_FUNCTION_NAME,

@@ -13,7 +13,7 @@ export const handler: ConvertHandler = async (event, _, callback) => {
 
   const s3 = new S3Client();
   const bucket = process.env.BUCKET;
-  const prefix = getPrefix(key);
+  const prefix = getPrefix(key, options.pathname);
 
   try {
     const { Body } = await s3.getObject(bucket, key);
