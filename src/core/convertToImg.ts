@@ -9,14 +9,16 @@ export const convertToImg = async (
   options: Options,
   buffer: Buffer
 ): Promise<PageObject[]> => {
-  const { size, quality, format } = options;
+  const { size, quality, format, density } = options;
   const result = pages.map(
     (page) =>
       new Promise<PageObject>((resolve, reject) =>
         gm(buffer)
+          .limit('memory', process.env.CONVERT_MEMORY_SIZE)
           .selectFrame(page)
           .resize(size)
           .quality(quality)
+          .density(density, density)
           .toBuffer(format, (error, imgBuffer) =>
             error
               ? reject(

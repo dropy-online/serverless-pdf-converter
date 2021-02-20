@@ -32,12 +32,9 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     validate(ContentType);
 
     const options = getOptions(event.queryStringParameters || {});
-    const pageDivision = await getPdfPages(
-      Body as Buffer,
-      Number(process.env.PARALLEL_EXEC_OFFSET)
-    );
+    const pageDivision = await getPdfPages(Body as Buffer, options.division);
     const result = await parallelRequest<PageDivision, ConvertParams, ConvertResponse>(
-      process.env.PARALLEL_FUNCTION_NAME,
+      process.env.CONVERT_FUNCTION_NAME,
       pageDivision,
       { options, key }
     );

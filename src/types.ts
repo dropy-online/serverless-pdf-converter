@@ -2,18 +2,19 @@ import { Handler } from 'aws-lambda';
 import { S3 } from 'aws-sdk';
 
 export interface Options {
-  format: string;
-  size: number;
-  quality: number;
+  format?: string;
+  size?: number | null;
+  quality?: number;
+  density: number;
+  division?: number;
+}
+
+export interface QueryParams extends Options {
+  key: string;
 }
 
 export enum AvailableType {
   'application/pdf' = 'pdf',
-}
-
-export enum AvailableOutputType {
-  jpg = 'jpg',
-  png = 'png',
 }
 
 export type S3Object = {

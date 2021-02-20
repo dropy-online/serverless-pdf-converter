@@ -16,19 +16,20 @@ const serverlessConfiguration: Serverless = {
   provider: {
     name: 'aws',
     runtime: 'nodejs10.x',
-    region: 'ap-northeast-2',
+    region: "${opt:region, 'ap-northeast-2'}",
     stage: "${opt:stage, 'dev'}",
     environment: {
       BUCKET: 'dropy',
       REGION: '${self:provider.region}',
       STAGE: '${self:provider.stage}',
-      PARALLEL_EXEC_OFFSET: 3,
-      PARALLEL_FUNCTION_NAME: '${self:service.name}-${self:provider.stage}-convert',
-      CONFIG: JSON.stringify({
-        maxSize: 1204,
-        minSize: 10,
-        maxQuality: 200,
-        minQuality: 10,
+      CONVERT_MEMORY_SIZE: 2048,
+      CONVERT_FUNCTION_NAME: '${self:service.name}-${self:provider.stage}-convert',
+      DEFAULT_OPTIONS: JSON.stringify({
+        format: 'png',
+        size: null,
+        quality: 100,
+        density: 200,
+        division: 3,
       }),
     },
     iamRoleStatements: [
@@ -62,6 +63,7 @@ const serverlessConfiguration: Serverless = {
                   format: true,
                   size: true,
                   quality: true,
+                  division: true,
                 },
               },
             },
@@ -70,7 +72,7 @@ const serverlessConfiguration: Serverless = {
       ],
     },
     convert: {
-      memorySize: 2048,
+      memorySize: process.env.CONVERT_MEMORY_SIZE,
       timeout: 900,
       handler: 'src/convert.handler',
       layers: [
