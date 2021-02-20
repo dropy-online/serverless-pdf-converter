@@ -3,7 +3,7 @@ import type { Serverless } from 'serverless/aws';
 /* eslint-disable no-template-curly-in-string */
 const serverlessConfiguration: Serverless = {
   service: {
-    name: 'dropy-lambda-layer',
+    name: 'serverless-pdf-converter',
   },
   frameworkVersion: '2',
   custom: {

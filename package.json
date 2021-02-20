@@ -1,9 +1,14 @@
 {
-  "name": "dropy-lambda-layer",
+  "name": "serverless-pdf-converter",
   "version": "1.0.0",
-  "description": "Convert presentation file to image format",
+  "description": "Convert pdf to image format",
+  "repository": "https://github.com/dropy-online/serverless-pdf-converter.git",
+  "author": "aereeeee <dofl5576@gmail.com>",
+  "license": "MIT",
   "scripts": {
     "test": "NODE_ENV=test ./node_modules/.bin/jest --ci --verbose",
+    "start": "sls offline",
+    "deploy": "sls deploy --stage production",
     "build": "tsc"
   },
   "dependencies": {
@@ -47,8 +52,6 @@
     "webpack": "^4.29.0",
     "webpack-node-externals": "^1.7.2"
   },
-  "author": "The serverless webpack authors (https://github.com/elastic-coders/serverless-webpack)",
-  "license": "MIT",
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged"
