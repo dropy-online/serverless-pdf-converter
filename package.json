@@ -4,7 +4,7 @@
   "description": "Convert pdf to image format",
   "repository": "https://github.com/dropy-online/serverless-pdf-converter.git",
   "author": "aereeeee <dofl5576@gmail.com>",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "scripts": {
     "test": "NODE_ENV=test ./node_modules/.bin/jest --ci --verbose",
     "start": "sls offline",
