@@ -1,3 +1,5 @@
+const serverlessConfiguration = require('../../serverless');
+
 const env = {
   AWS_REGION: 'local',
   AWS_ACCESS_KEY: 'fake_key',
@@ -7,4 +9,5 @@ const env = {
 process.env = {
   ...process.env,
   ...env,
+  ...serverlessConfiguration.provider.environment,
 };

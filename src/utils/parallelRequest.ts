@@ -8,7 +8,7 @@ const lambdaConfig = {
       : `https://lambda.${process.env.REGION}.amazonaws.com`,
 };
 
-export const parallelRequest = async <TItems extends any[], TParams, TResult>(
+export const parallelRequest = async <TItems extends unknown[], TParams, TResult>(
   functionName: string,
   items: TItems,
   params: TParams

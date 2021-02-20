@@ -35,6 +35,7 @@ module.exports = {
     'import/prefer-default-export': 'off',
     'no-shadow': 'off',
     '@typescript-eslint/no-shadow': ['error'],
+    '@typescript-eslint/no-var-requires': 'off',
     'jest/no-commented-out-tests': 'off',
     'comma-dangle': 'off',
     'no-confusing-arrow': 'off',
