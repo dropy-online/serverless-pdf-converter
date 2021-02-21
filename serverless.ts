@@ -1,10 +1,8 @@
-import type { Serverless } from 'serverless/aws';
+import type { AWS } from '@serverless/typescript';
 
 /* eslint-disable no-template-curly-in-string */
-const serverlessConfiguration: Serverless = {
-  service: {
-    name: 'serverless-pdf-converter',
-  },
+const serverlessConfiguration: AWS = {
+  service: 'serverless-pdf-converter',
   frameworkVersion: '2',
   custom: {
     webpack: {
@@ -16,35 +14,44 @@ const serverlessConfiguration: Serverless = {
   provider: {
     name: 'aws',
     runtime: 'nodejs10.x',
-    region: "${opt:region, 'ap-northeast-2'}",
+    region: 'ap-northeast-2',
     stage: "${opt:stage, 'dev'}",
+    apiGateway: {
+      minimumCompressionSize: 1024,
+      shouldStartNameWithService: true,
+    },
     environment: {
       BUCKET: 'dropy',
       REGION: '${self:provider.region}',
       STAGE: '${self:provider.stage}',
-      CONVERT_MEMORY_SIZE: 2048,
+      CONVERT_MEMORY_SIZE: '2048',
       CONVERT_FUNCTION_NAME: '${self:service.name}-${self:provider.stage}-convert',
       DEFAULT_OPTIONS: JSON.stringify({
         format: 'png',
         size: null,
         quality: 100,
-        density: 200,
+        density: 144,
         division: 3,
         pathname: 'images',
       }),
     },
-    iamRoleStatements: [
-      {
-        Effect: 'Allow',
-        Action: 's3:*',
-        Resource: 'arn:aws:s3:::*',
+    iam: {
+      role: {
+        statements: [
+          {
+            Effect: 'Allow',
+            Action: 's3:*',
+            Resource: 'arn:aws:s3:::*',
+          },
+          {
+            Effect: 'Allow',
+            Action: ['lambda:InvokeFunction', 'lambda:InvokeAsync'],
+            Resource: '*',
+          },
+        ],
       },
-      {
-        Effect: 'Allow',
-        Action: ['lambda:InvokeFunction', 'lambda:InvokeAsync'],
-        Resource: '*',
-      },
-    ],
+    },
+    lambdaHashingVersion: '20201221',
   },
   functions: {
     endpoint: {
@@ -74,7 +81,7 @@ const serverlessConfiguration: Serverless = {
       ],
     },
     convert: {
-      memorySize: process.env.CONVERT_MEMORY_SIZE,
+      memorySize: Number(process.env.CONVERT_MEMORY_SIZE),
       timeout: 900,
       handler: 'src/convert.handler',
       layers: [

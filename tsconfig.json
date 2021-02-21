@@ -1,4 +1,5 @@
 {
+  "extends": "./tsconfig.paths.json",
   "compilerOptions": {
     "lib": ["es2020"],
     "removeComments": true,
@@ -10,7 +11,7 @@
     "outDir": "lib",
     "inlineSources": true,
     "esModuleInterop": true,
-    "baseUrl": "./",
+    "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"],
     }
