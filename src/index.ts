@@ -1,11 +1,11 @@
 import 'source-map-support/register';
 import { APIGatewayProxyHandler } from 'aws-lambda';
-import { S3Client, validate, getPdfPages, getOptions } from '@/core';
+import { S3Client, validate, split, getOptions } from '@/core';
 import { response, parallelRequest, getPrefix } from '@/utils';
 import {
   RequestErrors,
-  ErrorBody,
-  SuccessBody,
+  ErrorResponseBody,
+  SuccessResponseBody,
   PageDivision,
   ConvertParams,
   ConvertResponse,
@@ -14,26 +14,26 @@ import {
 
 export const handler: APIGatewayProxyHandler = async (event) => {
   if (!event.queryStringParameters?.key) {
-    return response<ErrorBody>(500, {
+    return response<ErrorResponseBody>(500, {
       status: 'error',
       error: {
         code: RequestErrors.UNDEFINED_QUERY_PARAMS,
       },
     });
   }
-  const s3 = new S3Client();
-  const bucket = process.env.BUCKET;
+  const s3 = new S3Client(process.env.BUCKET);
   const { key: encodedKey } = event.queryStringParameters;
   const key = decodeURIComponent(encodedKey);
   const options = getOptions(event.queryStringParameters || {});
   const prefix = getPrefix(key, options.pathname);
 
   try {
-    const { ContentType, Body } = await s3.getObject(bucket, key);
+    const { ContentType, Body } = await s3.getObject(key);
 
     validate(ContentType);
 
-    const pageDivision = await getPdfPages(Body as Buffer, options.division);
+    const pageDivision = await split(Body as Buffer, options.division);
+
     const result = await parallelRequest<PageDivision, ConvertParams, ConvertResponse>(
       process.env.CONVERT_FUNCTION_NAME,
       pageDivision,
@@ -41,17 +41,17 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     );
     const data = result.reduce((acc: ConvertResult[], res) => acc.concat(res.data), []);
 
-    return response<SuccessBody>(200, {
+    return response<SuccessResponseBody>(200, {
       status: 'succeded',
       data,
     });
   } catch (e) {
-    await s3.emptyBucket(bucket, prefix);
+    await s3.emptyBucket(prefix);
 
     const error = typeof e === 'string' ? JSON.parse(e) : e;
     const statusCode: number = error?.message?.statusCode || 500;
 
-    return response<ErrorBody>(statusCode, {
+    return response<ErrorResponseBody>(statusCode, {
       status: 'error',
       error,
     });

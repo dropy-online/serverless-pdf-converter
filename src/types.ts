@@ -5,7 +5,7 @@ export interface Options {
   format?: string;
   size?: number | null;
   quality?: number;
-  density: number;
+  density?: number | null;
   division?: number;
   pathname?: string | null;
 }
@@ -24,11 +24,6 @@ export type S3Object = {
 };
 
 export type PageDivision = number[][];
-
-export type PageObject = {
-  page: number;
-  body: Buffer;
-};
 
 export type ConvertParams = { options: Options; key: string };
 
@@ -71,12 +66,12 @@ export type ErrorInfo = {
   message?: string | Error | null;
 };
 
-export type ErrorBody = {
+export type ErrorResponseBody = {
   status: 'error';
   error: ErrorInfo | string;
 };
 
-export type SuccessBody = {
+export type SuccessResponseBody = {
   status: 'succeded';
   data: ConvertResult[];
 };
