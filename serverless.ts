@@ -21,16 +21,16 @@ const serverlessConfiguration: AWS = {
       shouldStartNameWithService: true,
     },
     environment: {
-      BUCKET: 'dropy',
+      BUCKET: 'your bucket',
       REGION: '${self:provider.region}',
       STAGE: '${self:provider.stage}',
-      CONVERT_MEMORY_SIZE: '2048',
+      CONVERT_MEMORY_SIZE: '${self:functions.convert.memorySize}',
       CONVERT_FUNCTION_NAME: '${self:service.name}-${self:provider.stage}-convert',
       DEFAULT_OPTIONS: JSON.stringify({
         format: 'png',
         size: null,
         quality: 100,
-        density: 144,
+        density: null,
         division: 3,
         pathname: 'images',
       }),
@@ -81,13 +81,10 @@ const serverlessConfiguration: AWS = {
       ],
     },
     convert: {
-      memorySize: Number(process.env.CONVERT_MEMORY_SIZE),
+      memorySize: 1024,
       timeout: 900,
       handler: 'src/convert.handler',
-      layers: [
-        'arn:aws:lambda:ap-northeast-2:073744365895:layer:ghostscript:1',
-        'arn:aws:lambda:ap-northeast-2:073744365895:layer:image-magick:1',
-      ],
+      layers: ['your ghostscript layer arn', 'your imagemagick layer arn'],
     },
   },
 };
