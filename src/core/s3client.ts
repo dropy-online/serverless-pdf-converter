@@ -1,17 +1,20 @@
 import { S3 } from 'aws-sdk';
 import { createError, createObjectKey } from '@/utils';
-import { PageObject, ConvertResult, S3Errors, S3Object } from '@/types';
+import { ConvertResult, S3Errors, S3Object } from '@/types';
 
 export class S3Client {
-  client: S3;
+  private client: S3;
 
-  constructor() {
+  private Bucket: string;
+
+  constructor(bucket: string) {
     this.client = new S3();
+    this.Bucket = bucket;
   }
 
-  async getObject(Bucket: string, Key: string): Promise<S3Object> {
+  async getObject(Key: string): Promise<S3Object> {
     const params: S3.GetObjectRequest = {
-      Bucket,
+      Bucket: this.Bucket,
       Key,
     };
     try {
@@ -35,9 +38,9 @@ export class S3Client {
     }
   }
 
-  async deleteObject(Bucket: string, Key: string): Promise<S3.DeleteObjectOutput> {
+  async deleteObject(Key: string): Promise<S3.DeleteObjectOutput> {
     const params: S3.DeleteObjectRequest = {
-      Bucket,
+      Bucket: this.Bucket,
       Key,
     };
     try {
@@ -47,9 +50,9 @@ export class S3Client {
     }
   }
 
-  async emptyBucket(Bucket: string, Prefix: string | undefined): Promise<void> {
+  async emptyBucket(Prefix: string | undefined): Promise<void> {
     const params: S3.ListObjectsV2Request = {
-      Bucket,
+      Bucket: this.Bucket,
       Prefix,
     };
     const data = await this.client.listObjectsV2(params).promise();
@@ -57,7 +60,7 @@ export class S3Client {
     const deletes = keys.map(
       (key) =>
         new Promise((resolve, reject) => {
-          this.deleteObject(Bucket, key)
+          this.deleteObject(key)
             .then((deleteData) => resolve(deleteData))
             .catch((err) => reject(err));
         })
@@ -65,23 +68,14 @@ export class S3Client {
     await Promise.all(deletes);
   }
 
-  async uploadObjects(
-    array: PageObject[],
-    Bucket: string,
+  async uploadObject(
+    image: Buffer,
+    page: number,
     prefix: string | undefined,
     format: string
-  ): Promise<ConvertResult[]> {
-    const uploads = array
-      .reduce((acc, val) => acc.concat(val), [])
-      .map((item) => {
-        const Key = createObjectKey(prefix, item.page, format);
-        return new Promise<ConvertResult>((resolve, reject) => {
-          this.putObject(item.body, { Bucket, Key, ACL: 'public-read' })
-            .then(() => resolve({ page: item.page, url: Key }))
-            .catch((err) => reject(err));
-        });
-      });
-    const result = await Promise.all(uploads);
-    return result;
+  ): Promise<ConvertResult> {
+    const Key = createObjectKey(prefix, page, format);
+    await this.putObject(image, { Bucket: this.Bucket, Key, ACL: 'public-read' });
+    return { page, url: Key };
   }
 }
