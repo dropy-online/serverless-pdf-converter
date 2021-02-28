@@ -14,14 +14,14 @@ const serverlessConfiguration: AWS = {
   provider: {
     name: 'aws',
     runtime: 'nodejs10.x',
-    region: 'ap-northeast-2',
+    region: 'xxx',
     stage: "${opt:stage, 'dev'}",
     apiGateway: {
       minimumCompressionSize: 1024,
       shouldStartNameWithService: true,
     },
     environment: {
-      BUCKET: 'your bucket',
+      BUCKET: 'xxx',
       REGION: '${self:provider.region}',
       STAGE: '${self:provider.stage}',
       CONVERT_MEMORY_SIZE: '${self:functions.convert.memorySize}',
@@ -29,7 +29,7 @@ const serverlessConfiguration: AWS = {
       DEFAULT_OPTIONS: JSON.stringify({
         format: 'png',
         size: null,
-        quality: 100,
+        quality: null,
         density: null,
         division: 3,
         pathname: 'images',
@@ -55,7 +55,7 @@ const serverlessConfiguration: AWS = {
   },
   functions: {
     endpoint: {
-      memorySize: 1024,
+      memorySize: 512,
       timeout: 30,
       handler: 'src/index.handler',
       events: [
@@ -84,7 +84,10 @@ const serverlessConfiguration: AWS = {
       memorySize: 1024,
       timeout: 900,
       handler: 'src/convert.handler',
-      layers: ['your ghostscript layer arn', 'your imagemagick layer arn'],
+      layers: [
+        'arn:aws:lambda:ap-northeast-2:xxxxxxxxxxxx:layer:ghostscript:1',
+        'arn:aws:lambda:ap-northeast-2:xxxxxxxxxxxx:layer:image-magick:1',
+      ],
     },
   },
 };
