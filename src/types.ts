@@ -3,11 +3,11 @@ import { S3 } from 'aws-sdk';
 
 export interface Options {
   format?: string;
+  pathname?: string | null;
   size?: number | null;
-  quality?: number;
+  quality?: number | null;
   density?: number | null;
   division?: number;
-  pathname?: string | null;
 }
 
 export interface QueryParams extends Options {
